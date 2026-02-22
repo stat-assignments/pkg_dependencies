@@ -17,5 +17,7 @@ clone_folder(selected, dest_dir, postfix = "submissions")
 Clone a set of github repos into a folder
 }
 \examples{
-ghc("451", clone_folder)
+\dontrun{
+  ghc("451", clone_folder)
+  }
 }

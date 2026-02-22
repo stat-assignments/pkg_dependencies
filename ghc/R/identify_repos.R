@@ -3,6 +3,11 @@
 #' @param course organization to check
 #' @param f function to be called with the selected repos
 #' @return function call to f with the identified repos
+#' @importFrom stats hclust cutree as.dist
+#' @importFrom utils menu
+#' @importFrom stringdist stringdist
+#' @importFrom dplyr group_by arrange summarize mutate filter n desc slice
+#' @importFrom rlang .data
 #' @export
 ghc <- function(course = "451", f) {
 #  library(dplyr)
@@ -14,11 +19,11 @@ ghc <- function(course = "451", f) {
 
   clust <- hclust(as.dist(repos_dist))
   repos_df$cluster <- cutree(clust, h = 0.25)
-  repos_df <- repos_df |> group_by(cluster) |> mutate(
+  repos_df <- repos_df |> group_by(.data$cluster) |> mutate(
     prefix = longest_common_prefix(names)
   )
 
-  folders <- repos_df |> group_by(cluster) |>
+  folders <- repos_df |> group_by(.data$cluster) |>
     summarize(
       prefix = prefix[1],
       choice = sprintf("%s (%d)", prefix, n()),
@@ -28,7 +33,7 @@ ghc <- function(course = "451", f) {
   # which assignment do you want to deal with?
   selection <- menu(folders$choice, title="Which assignment?")
 
-  selected <- repos_df |> filter(prefix == folders$prefix[selection])
+  selected <- repos_df |> slice(grep(folders$prefix[selection], names))
   repos_selected <- repos |> purrr::keep(.p = function(x) x$name %in% selected$names)
 
   f(repos_selected, selected$prefix[1])

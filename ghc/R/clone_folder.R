@@ -5,7 +5,9 @@
 #' @param post_fix user defined ending for folders, defaults to "-submissions"
 #' @export
 #' @examples
-#' ghc("451", clone_folder)
+#' \dontrun{
+#'   ghc("451", clone_folder)
+#'   }
 clone_folder <- function(selected, dest_dir, postfix = "submissions") {
   dest_dir <- paste0(dest_dir, postfix)
   if (!dir.exists(dest_dir)) dir.create(dest_dir)
